@@ -1,36 +1,82 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FORMATLAB
 
-## Getting Started
+Convertidor de archivos **100% en el navegador**. Tus archivos nunca se suben a un
+servidor: la conversión ocurre en tu equipo mediante WebAssembly.
 
-First, run the development server:
+> **Estado:** MVP en construcción. Alcance inicial: **imágenes** y **datos**.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Por qué
+
+Casi todos los convertidores online funcionan igual: subes el archivo, se procesa en un
+servidor ajeno y lo descargas. Eso implica esperar, límites de tamaño y confiar tus
+documentos a terceros.
+
+FORMATLAB invierte el modelo. El motor de conversión se descarga una vez y se ejecuta
+dentro del navegador. El resultado es inmediato, no hay límite de tamaño impuesto por un
+servidor y nada sale de tu equipo.
+
+## Stack
+
+| Pieza | Tecnología |
+| --- | --- |
+| Framework | Next.js 16 (App Router, `output: "export"`) |
+| Lenguaje | TypeScript |
+| Estilos | Tailwind CSS v4 |
+| Conversión | WebAssembly (motores por definir en cada fase) |
+
+El proyecto es un **sitio estático**: `next build` genera `out/` y se sirve desde
+cualquier hosting estático, sin backend ni funciones serverless.
+
+## Estructura
+
+```
+src/
+├── app/                  rutas y layout
+├── components/           UI reutilizable
+└── lib/
+    ├── registry.ts       matriz de conversiones (fuente de verdad)
+    └── engines/          un módulo por motor de conversión
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Comandos
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run dev      # http://localhost:3000
+npm run build    # genera out/
+npm run lint
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Para inspeccionar el build estático como se vería en producción:
 
-## Learn More
+```bash
+npx serve out
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Flujo de trabajo
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `main` está protegida: **no se commitea directo**.
+- Cada cambio nace en una rama corta (`feat/`, `fix/`, `chore/`, `docs/`, `ci/`).
+- Los commits siguen [Conventional Commits](https://www.conventionalcommits.org/).
+- Se integra mediante Pull Request con **squash merge**.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Hoja de ruta
 
-## Deploy on Vercel
+- [x] Scaffold: Next.js, TypeScript, Tailwind, export estático
+- [ ] Matriz de conversiones (`lib/registry.ts`)
+- [ ] Dropzone y detección real de formato
+- [ ] Motor de imágenes
+- [ ] Motor de datos (CSV, JSON, XLSX, XML, YAML)
+- [ ] Exportación por lotes en ZIP
+- [ ] Historial local
+- [ ] CI
+- [ ] Documentación de arquitectura
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Referencias
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+La idea y la aproximación técnica están inspiradas en [VERT](https://github.com/Vert-sh/VERT)
+(AGPL-3.0), un convertidor de archivos local basado en WebAssembly. FORMATLAB es una
+implementación propia: no reutiliza su código.
+
+## Licencia
+
+Por definir.
